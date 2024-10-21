@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+helpdesk_escalator.access_helpdesk_escalator_category,access_helpdesk_escalator_category,helpdesk_escalator.model_helpdesk_escalator_category,base.group_user,1,1,1,1
+helpdesk_escalator.access_helpdesk_escalator_level,access_helpdesk_escalator_level,helpdesk_escalator.model_helpdesk_escalator_level,base.group_user,1,1,1,1
+helpdesk_escalator.access_helpdesk_department,access_helpdesk_department,helpdesk_escalator.model_helpdesk_department,base.group_user,1,1,1,1

@@ -1,0 +1,151 @@
+<odoo>
+    <!-- Escalator Category Form View -->
+    <record id="view_escalator_category_form" model="ir.ui.view">
+        <field name="name">escalator.category.form</field>
+        <field name="model">helpdesk.escalator.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" required="1"/>
+                        <field name="owner"/>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Escalation Levels">
+                            <field name="escalation_level_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="time_unit"/>
+                                    <field name="time_amount"/>
+                                    <field name="department_id"/>
+                                    <field name="team_ids" domain="[('department_id', '=', department_id)]"
+                                           string="Sub Team"/>
+
+                                    <field name="assigned_owner_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_escalator_category_tree" model="ir.ui.view">
+        <field name="name">escalator.category.tree</field>
+        <field name="model">helpdesk.escalator.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" required="1"/>
+                <field name="owner"/>
+                <field name="formatted_owners"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Helpdesk Ticket Form View -->
+    <record id="view_helpdesk_ticket_form_inherited" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.inherit</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='team_id']" position="before">
+                <field name="escalation_category_id"/>
+                <field name="escalation_level_id"  domain="[('category_id', '=', escalation_category_id)]"/>
+                <field name="department_id" />
+                <field name="escalation_start_time" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+
+
+
+
+    <!-- views/helpdesk_department_views.xml -->
+
+    <record id="view_helpdesk_team_form" model="ir.ui.view">
+        <field name="name">helpdesk.team.form.inherit</field>
+        <field name="model">helpdesk.team</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_team_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+
+                <label for="department_id" string="Department"/>
+                <field name="department_id"/>
+
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_helpdesk_department_form" model="ir.ui.view">
+        <field name="name">helpdesk.department.form</field>
+        <field name="model">helpdesk.department</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="team_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_department_tree" model="ir.ui.view">
+        <field name="name">helpdesk.department.tree</field>
+        <field name="model">helpdesk.department</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="team_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_department" model="ir.actions.act_window">
+        <field name="name">helpdesk department</field>
+        <field name="res_model">helpdesk.department</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action for Escalator Categories -->
+    <record id="action_escalator_category" model="ir.actions.act_window">
+        <field name="name">Escalation Categories</field>
+        <field name="res_model">helpdesk.escalator.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Parent Menu for Helpdesk (Root Level) -->
+    <menuitem id="menu_helpdesk_root"
+              name="Helpdesk"
+              sequence="90"
+              web_icon="helpdesk,static/description/icon.svg"
+              groups="helpdesk.group_helpdesk_user"/>
+
+    <!-- Configuration Menu under Helpdesk -->
+    <menuitem id="helpdesk_menu_config"
+              name="Configuration"
+              sequence="100"
+              parent="menu_helpdesk_root"
+              groups="helpdesk.group_helpdesk_manager"/>
+
+    <!-- Custom Menu under Configuration -->
+    <menuitem id="menu_helpdesk_escalator_category"
+              name="Category"
+              sequence="9"
+              parent="helpdesk.helpdesk_menu_config"
+              action="action_escalator_category"/>
+
+    <menuitem id="menu_helpdesk_department"
+              name="Departments"
+              parent="helpdesk.helpdesk_menu_config"
+              action="action_helpdesk_department"/>
+
+    <!-- Cron Job to Check Ticket Escalation -->
+
+</odoo>
